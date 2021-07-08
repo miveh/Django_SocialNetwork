@@ -2,6 +2,7 @@ from django.utils import timezone
 
 from django.db import models
 from user.models import User
+import book.models
 
 
 # Create your models here.
@@ -12,19 +13,19 @@ class Book(models.Model):
         verbose_name = 'کتاب'
         verbose_name_plural = 'کتاب ها'
 
-    STATUS_CHOICESE = [('F', 'free'), ('B', 'borrwed'), ('D', 'deprecated')]
+    STATUS_CHOICESE = [('F', 'free'), ('B', 'borrowed'), ('D', 'deprecated')]
     name = models.CharField('book name', max_length=50, null=True)
-
+    writer = models.CharField('writer', max_length=50, null=True)
     image = models.ImageField('books/', blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     liked = models.ManyToManyField(User, blank=True, related_name='likes')
     publish_year = models.IntegerField('publish year', default=2021)
-    record_date = models.DateTimeField('record time', default=timezone.now)
-    update_time = models.DateTimeField('update time', default=timezone.now)
+    recorded = models.DateTimeField('record time', default=timezone.now)
+    updated = models.DateTimeField('update time', default=timezone.now)
     status = models.CharField('status', max_length=1, choices=STATUS_CHOICESE, default='F')
 
     def __str__(self):
-        return f'{self.book_name} write by {self.book_writer}'
+        return f'{self.name} write by {self.writer}'
 
     def status(self):
         if self.status == 'F':
@@ -36,7 +37,7 @@ class Book(models.Model):
         return self.status
 
     def get_record_date(self):
-        return self.record_date.year
+        return self.recorded.year
 
 
 class Comment(models.Model):

@@ -2,10 +2,11 @@ from django.db import models
 
 
 # Create your models here.
+import user.models
 
 
 class User(models.Model):
-    GENDER_CHOICES = [('M', 'Male'), ('F', 'Fmale')]
+    GENDER_CHOICES = [('M', 'Male'), ('F', 'Female')]
     first_name = models.CharField('first name', max_length=100, null=True)
     last_name = models.CharField('last name', max_length=100, null=True, blank=True)
     username = models.CharField('username', max_length=50, unique=True)
@@ -17,9 +18,9 @@ class User(models.Model):
     website = models.URLField('website')
     email = models.EmailField('email')
     register_date = models.DateTimeField('register date', auto_now_add=True)
-    update_date = models.DateTimeField('update date')
+    updated = models.DateTimeField('update date')
     credit = models.IntegerField('credit', default=20)
-    friends = models.ManyToManyField("User", blank=True)
+    friends = models.ManyToManyField("self", blank=True, related_name='friend')
 
     @property
     def full_name(self):
@@ -39,7 +40,7 @@ class User(models.Model):
 
 
 class Relationship(models.Model):
-    STATUS_CHOICES = [('A', 'accepted'), ('R', 'requested'), ('N','none')]
+    STATUS_CHOICES = [('A', 'accepted'), ('R', 'requested'), ('N', 'none')]
     sender = models.ForeignKey(User, max_length=20, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(User, max_length=50, on_delete=models.CASCADE, related_name='receiver')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='N')
@@ -48,5 +49,3 @@ class Relationship(models.Model):
 
     def __str__(self):
         return f"{self.sender}, {self.receiver}, {self.status}"
-
-
