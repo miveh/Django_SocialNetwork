@@ -38,6 +38,18 @@ class User(models.Model):
         self.credit += amount
         self.save()
 
+    def get_friend(self):
+        return self.friends.all()
+
+    def get_friend_no(self):
+        return self.friends.count()
+
+    def get_book(self):
+        return self.user.all()
+
+    def get_book_no(self):
+        return self.user.count()
+
 
 class Relationship(models.Model):
     STATUS_CHOICES = [('A', 'accepted'), ('R', 'requested'), ('N', 'none')]
