@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AbstractUser
+
 from django.db import models
 
 
@@ -5,8 +7,13 @@ from django.db import models
 import user.models
 
 
-class User(models.Model):
+class Profile(AbstractUser):
+    # برای استففاده از یوزر خود جنگو
+    # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'username'
     GENDER_CHOICES = [('M', 'Male'), ('F', 'Female')]
+
     first_name = models.CharField('first name', max_length=100, null=True)
     last_name = models.CharField('last name', max_length=100, null=True, blank=True)
     username = models.CharField('username', max_length=50, unique=True)
@@ -18,9 +25,9 @@ class User(models.Model):
     website = models.URLField('website')
     email = models.EmailField('email')
     register_date = models.DateTimeField('register date', auto_now_add=True)
-    updated = models.DateTimeField('update date')
+    updated = models.DateTimeField('update date', auto_now=True)
     credit = models.IntegerField('credit', default=20)
-    friends = models.ManyToManyField("self", blank=True, related_name='friend')
+    friends = models.ManyToManyField("Profile", blank=True, related_name='my_friend')
 
     @property
     def full_name(self):
@@ -53,8 +60,8 @@ class User(models.Model):
 
 class Relationship(models.Model):
     STATUS_CHOICES = [('A', 'accepted'), ('R', 'requested'), ('N', 'none')]
-    sender = models.ForeignKey(User, max_length=20, on_delete=models.CASCADE, related_name='sender')
-    receiver = models.ForeignKey(User, max_length=50, on_delete=models.CASCADE, related_name='receiver')
+    sender = models.ForeignKey(Profile, max_length=20, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(Profile, max_length=50, on_delete=models.CASCADE, related_name='receiver')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='N')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
